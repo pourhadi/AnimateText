@@ -29,7 +29,7 @@ import SwiftUI
 public struct AnimateText<E: ATTextAnimateEffect>: View {
     
     /// Binding the text to be expressed.
-    @Binding private var text: String
+    @Binding private var text: AttributedString
     
     /// The type used to split text.
     var type: ATUnitType = .letters
@@ -38,7 +38,7 @@ public struct AnimateText<E: ATTextAnimateEffect>: View {
     var userInfo: Any? = nil
     
     /// Split text into individual elements.
-    @State private var elements: Array<String> = []
+    @State private var elements: Array<AttributedString> = []
     
     /// A value used for animation processing. A value between 0 and 1.
     @State private var value: Double = 0
@@ -59,7 +59,7 @@ public struct AnimateText<E: ATTextAnimateEffect>: View {
     ///   - type: The type used to split text. `ATUnitType`
     ///   - userInfo: Custom user info for the effect.
     ///
-    public init(_ text: Binding<String>, type: ATUnitType = .letters, userInfo: Any? = nil) {
+    public init(_ text: Binding<AttributedString>, type: ATUnitType = .letters, userInfo: Any? = nil) {
         _text = text
         self.type = type
         self.userInfo = userInfo
@@ -103,14 +103,16 @@ public struct AnimateText<E: ATTextAnimateEffect>: View {
         }
     }
     
-    private func getText(_ text: String) {
+    private func getText(_ text: AttributedString) {
         switch type {
         case .letters:
-            self.elements = text.map { String($0) }
+            self.elements = text.characters.enumerated().map { offset, element in
+                return AttributedString([element])
+            }
         case .words:
-            var elements = [String]()
-            text.components(separatedBy: " ").forEach{
-                elements.append($0)
+            var elements = [AttributedString]()
+            text.characters.split(separator: " ").forEach{
+                elements.append(AttributedString($0))
                 elements.append(" ")
             }
             elements.removeLast()

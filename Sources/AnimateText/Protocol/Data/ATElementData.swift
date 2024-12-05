@@ -29,7 +29,7 @@ import SwiftUI
 public struct ATElementData {
     
     /// Individual element `String`.
-    public let element: String
+    public let element: AttributedString
     
     /// The type used to split text.
     public let type: ATUnitType
